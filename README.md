@@ -1,0 +1,1 @@
+A project with customizability to make images into text!
