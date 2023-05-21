@@ -10,7 +10,7 @@
 {% if color == "False"%}
 <style>
 pre{
-    background: linear-gradient(-13deg, #00ff37, 
+    background: linear-gradient(-{{deg}}deg, #00ff37, 
      #fbff02, #ff4e4e);
     -webkit-text-fill-color: transparent;
     -webkit-background-clip: text;
@@ -64,22 +64,26 @@ span{
     <input id = "invert" name = "invert" type="checkbox"  oninput="this.nextElementSibling.value = 'Invert: ' + this.value; document.getElementById('Form').submit();">
     <output>Invert</output>
 
-    <div id="gradientColors">
-        <input id = "lin1" name = "linColor1" type="color" oninput="this.nextElementSibling.value = 'Gradient Color 1: ' + this.value; updateLinGradient();">
+    <!--<div id="gradientColors">
+        <input id = "lin1" name = "linColor0" value = "{{session['colors'][0]}}" type="color" oninput="this.nextElementSibling.value = 'Gradient Color 1: ' + this.value; updateLinGradient();">
         <output>Gradient Color 1: </output>
-        <input id = "lin2" name = "linColor2" type="color" oninput="this.nextElementSibling.value = 'Gradient Color 2: ' + this.value; updateLinGradient();"> 
+        <input id = "lin2" name = "linColor1"  value = "{{session['colors'][1]}}" type="color" oninput="this.nextElementSibling.value = 'Gradient Color 2: ' + this.value; updateLinGradient();"> 
         <output>Gradient Color 2: </output>
-        <input id = "lin3" name = "linColor3" type="color" oninput="this.nextElementSibling.value = 'Gradient Color 3: ' + this.value; updateLinGradient();"> 
+        <input id = "lin3" name = "linColor2" type="color"  value = "{{session['colors'][2]}}" oninput="this.nextElementSibling.value = 'Gradient Color 3: ' + this.value; updateLinGradient();"> 
         <output>Gradient Color 3: </output>
     </div>
+    -->
+    <div id="gradientColors">
+    </div>
+
 
     <button onclick="addColor()" type="button">Add Gradient Color</button>
 
 
     <br>
 
-    <input name = "angle" id="angle" type="range" value="13" min="0" max="360" step="1" oninput="this.nextElementSibling.value = 'Deg: ' + this.value; updateLinGradient()">
-    <output>Deg: 13</output>
+    <input name = "deg" id="deg" type="range" value="{{deg}}" min="0" max="360" step="1" oninput="this.nextElementSibling.value = 'Deg: ' + this.value; updateLinGradient()">
+    <output>Deg: {{deg}}</output>
 
     <input name = "color1" type="color" oninput="this.nextElementSibling.value = this.value; document.getElementById('body').style.backgroundColor = this.value">
     <output>0 Background</output>
@@ -120,14 +124,22 @@ span{
 
 
 <script>
+    firstGradient();
+    updateLinGradient();
+    function firstGradient(){
+        {% for index in range(colors|length) %}
+            document.getElementById('gradientColors').insertAdjacentHTML("beforeend",   '<input id = "lin1 + ' + {{index}} + '" name = "linColor' + {{index}} + '" value = "{{colors[index]}}" type="color" oninput="this.nextElementSibling.value = \'Gradient Color 1: \' + this.value; updateLinGradient();">');
+            document.getElementById('gradientColors').insertAdjacentHTML("beforeend", '<output>Gradient Color ' + {{index}} + ': </output>');
+        {% endfor %}
+    }
 
     function makeGradient(){
-    const colorNames = $.map($('#gradientColors > input'), input => input.id);
+        const colorNames = $.map($('#gradientColors > input'), input => input.id);
 
-    gradient = 'linear-gradient( ' + document.getElementById('angle').value + 'deg';
-    colorNames.forEach((name, index) => gradient = gradient.concat(', ', document.getElementById(name).value));
-    gradient = gradient.concat(')');
-    return gradient;
+        gradient = 'linear-gradient( ' + document.getElementById('angle').value + 'deg';
+        colorNames.forEach((name, index) => gradient = gradient.concat(', ', document.getElementById(name).value));
+        gradient = gradient.concat(')');
+        return gradient;
     }
 
 
@@ -144,7 +156,7 @@ span{
 
 
     function addColor() {
-        document.getElementById('gradientColors').insertAdjacentHTML("beforeend",  '<input id = "lin" + getColorNum() name = "linColor" + getColorNum() type="color" oninput="this.nextElementSibling.value = \'Gradient Color \' + getColorNum() + \': \' + this.value; updateLinGradient();">' )
+        document.getElementById('gradientColors').insertAdjacentHTML("beforeend",  '<input id = "lin" + getColorNum() name = "linColor' + getColorNum() + '" type="color" oninput="this.nextElementSibling.value = \'Gradient Color \' + getColorNum() + \': \' + this.value; updateLinGradient();">' )
         document.getElementById('gradientColors').insertAdjacentHTML("beforeend", "<output>Gradient Color " + getColorNum() + ": </output>")
     }
 
